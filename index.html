@@ -1,0 +1,54 @@
+<!doctype html><html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f2e9"><link rel="manifest" href="manifest.json"><title>Kroatisch Tutor</title>
+<style>
+:root{--bg:#f6f2e9;--card:#fffdf8;--ink:#17211b;--muted:#68736d;--a:#176b57;--soft:#e3f0eb;--line:#dce3dd}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+main{max-width:720px;margin:auto;padding:env(safe-area-inset-top) 17px calc(90px + env(safe-area-inset-bottom))}
+header{padding:20px 2px 12px;display:flex;justify-content:space-between;align-items:center}h1{font-size:28px;margin:0}h2{margin:4px 0 10px}h3{margin:0 0 8px}.muted{color:var(--muted);font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 6px 20px #17351b0a}
+button{border:0;border-radius:14px;padding:13px 16px;background:var(--a);color:white;font-size:16px;font-weight:700}button.secondary{background:var(--soft);color:var(--ink)}button.ghost{background:transparent;color:var(--a);border:1px solid var(--line)}
+.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1}.space{display:flex;justify-content:space-between;gap:12px;align-items:center}.pill{background:var(--soft);padding:6px 9px;border-radius:99px;font-size:12px;font-weight:700}
+.progress{height:9px;background:#e4e9e5;border-radius:99px;overflow:hidden}.progress>div{height:100%;background:var(--a)}
+.word{font-size:40px;font-weight:800;margin-top:20px}.pron{color:var(--muted);font-style:italic}.meaning{font-size:21px;margin:8px 0}
+.example{background:#f0f6f2;padding:14px;border-radius:14px;margin:15px 0}.example b{font-size:18px}.notice{font-size:13px;color:var(--muted);line-height:1.5}
+.option{display:block;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);margin:7px 0}.option.correct{background:#e6f4ed}.option.wrong{background:#fae8e8}
+.stat{font-size:26px;font-weight:800}.hide{display:none}
+nav{position:fixed;bottom:0;left:0;right:0;background:#f6f2e9ed;backdrop-filter:blur(14px);padding:9px 12px calc(9px + env(safe-area-inset-bottom));display:flex;gap:8px;max-width:720px;margin:auto}nav button{flex:1;font-size:13px;padding:11px 8px}
+</style></head><body><main>
+<header><div><h1>🇭🇷 Kroatisch Tutor</h1><div class="muted">Deutsch → Hrvatski · 15 Minuten</div></div><span class="pill">Lokal</span></header>
+<section id="home"></section><section id="lesson" class="hide"></section><section id="quiz" class="hide"></section><section id="progress" class="hide"></section><section id="privacy" class="hide"></section>
+<nav><button onclick="show('home')">Heute</button><button onclick="show('progress')">Fortschritt</button><button onclick="show('privacy')">Privat</button></nav>
+</main><script>
+const lesson={title:"Grüßen & höflich sein",words:[
+["Bok","Hi / Hallo","bok","Bok!","Hi!","Informell."],
+["Dobar dan","Guten Tag","DO-bar dan","Dobar dan!","Guten Tag!","dobar = gut, dan = Tag."],
+["Dobro jutro","Guten Morgen","DO-bro YU-tro","Dobro jutro!","Guten Morgen!","jutro = Morgen."],
+["Dobra večer","Guten Abend","DO-bra WE-tscher","Dobra večer!","Guten Abend!","č ungefähr wie tsch."],
+["Hvala","Danke","HVA-la","Hvala!","Danke!",""],
+["Molim","Bitte / Gern geschehen","MO-lim","Hvala! — Molim!","Danke! — Bitte!","Sehr häufig."],
+["Doviđenja","Auf Wiedersehen","do-wi-DJE-nja","Doviđenja!","Auf Wiedersehen!","Langsam in Silben lernen."],
+["Oprostite","Entschuldigung","o-pro-STI-te","Oprostite.","Entschuldigung.","Höflich/formell."]
+],quiz:[
+["Wie sagt man „Danke“?","Hvala",["Molim","Hvala","Bok","Doviđenja"]],
+["Was bedeutet „Dobar dan“?","Guten Tag",["Guten Morgen","Bitte","Guten Tag","Auf Wiedersehen"]],
+["Wie sagst du informell „Hi“?","Bok",["Bok","Oprostite","Hvala","Dobra večer"]],
+["Was bedeutet „Doviđenja“?","Auf Wiedersehen",["Danke","Auf Wiedersehen","Entschuldigung","Guten Morgen"]]
+]};
+const KEY="kt_private_v1";let s=JSON.parse(localStorage.getItem(KEY)||"null")||{seen:{},quiz:null,streak:0};
+function save(){localStorage.setItem(KEY,JSON.stringify(s))}
+function show(id){document.querySelectorAll("main>section").forEach(x=>x.classList.add("hide"));document.getElementById(id).classList.remove("hide");({home:home,lesson:renderLesson,quiz:renderQuiz,progress:renderProgress,privacy:renderPrivacy}[id])()}
+function home(){let m=lesson.words.filter(w=>s.seen[w[0]]?.mastered).length;document.getElementById("home").innerHTML=`<div class="card"><div class="space"><div><div class="muted">HEUTE</div><h2>Lesson 1: ${lesson.title}</h2></div><span class="pill">15 min</span></div><p>8 wichtige Ausdrücke für deine ersten echten Gespräche.</p><div class="progress"><div style="width:${m/8*100}%"></div></div><p class="muted">${m}/8 aktuell gemeistert</p><button onclick="idx=0;show('lesson')">Lernen starten</button></div><div class="card"><h3>🧠 Dein Lernsystem</h3><p class="notice">Du lernst aktiv: sehen → sprechen → abrufen → Quiz. Unsichere Wörter werden erneut geprüft. Ältere Wörter werden später automatisch wieder eingebaut.</p></div>`}
+let idx=0;
+function renderLesson(){let w=lesson.words[idx];document.getElementById("lesson").innerHTML=`<div class="card"><div class="space"><span class="pill">Wort ${idx+1}/8</span><span class="muted">${lesson.title}</span></div><div class="word">${w[0]}</div><div class="pron">${w[2]}</div><div class="meaning">${w[1]}</div><div class="example"><b>${w[3]}</b><br>${w[4]}</div><p class="notice">Merktipp: ${w[5]||"Verbinde das Wort mit dem Beispielsatz."}</p><div class="row"><button onclick="mark(true)">✓ Sicher</button><button class="secondary" onclick="mark(false)">↻ Unsicher</button></div></div>`}
+function mark(ok){let w=lesson.words[idx],old=s.seen[w[0]]||{};s.seen[w[0]]={mastered:ok,attempts:(old.attempts||0)+1,last:Date.now()};save();if(idx<7){idx++;renderLesson()}else{q=0;score=0;show("quiz")}}
+let q=0,score=0;
+function renderQuiz(){if(q>=lesson.quiz.length)return finish();let x=lesson.quiz[q];document.getElementById("quiz").innerHTML=`<div class="card"><div class="muted">QUIZ ${q+1}/${lesson.quiz.length}</div><h2>${x[0]}</h2>${x[2].map(o=>`<button class="option" onclick="ans(this,${JSON.stringify(o)},${JSON.stringify(x[1])})">${o}</button>`).join("")}</div>`}
+function ans(btn,g,w){document.querySelectorAll(".option").forEach(x=>x.disabled=true);if(g===w){btn.classList.add("correct");score++}else{btn.classList.add("wrong");document.querySelectorAll(".option").forEach(x=>{if(x.textContent===w)x.classList.add("correct")})}setTimeout(()=>{q++;renderQuiz()},650)}
+function finish(){s.quiz={score,total:4,date:new Date().toISOString()};if(score===4)s.streak=(s.streak||0)+1;save();document.getElementById("quiz").innerHTML=`<div class="card"><h2>${score===4?"🎉 Lesson bestanden!":"Fast da – wir wiederholen."}</h2><div class="stat">${score}/4</div><p>${score===4?"Du hast das heutige Quiz perfekt geschafft. Die Lektion gilt trotzdem erst als dauerhaft gemeistert, wenn du die Wörter später wieder abrufen kannst.":"Kein Problem. Wiederholung ist Teil des Systems."}</p><button onclick="show('home')">Zur Übersicht</button></div>`}
+function renderProgress(){let m=lesson.words.filter(w=>s.seen[w[0]]?.mastered).length;document.getElementById("progress").innerHTML=`<div class="card"><h2>Fortschritt</h2><div class="row"><div><div class="stat">${m}/8</div><div class="muted">Wörter</div></div><div><div class="stat">${s.quiz?s.quiz.score+"/4":"—"}</div><div class="muted">letztes Quiz</div></div><div><div class="stat">${s.streak||0}</div><div class="muted">perfekte Quizze</div></div></div></div><div class="card"><h3>Woche 1</h3><p>8 Kern-Ausdrücke sicher verstehen und aktiv abrufen.</p><p class="notice">Ziel: ≥90% im Quiz und mindestens 7/8 Wörter nach einer Pause ohne Hilfe.</p></div>`}
+function renderPrivacy(){document.getElementById("privacy").innerHTML=`<div class="card"><h2>🔒 Privatsphäre</h2><p>Diese App ist local-first.</p><ul><li>Kein Konto</li><li>Keine Werbung</li><li>Keine Analyse/Tracker</li><li>Keine Standort-, Kamera-, Mikrofon-, Kontakte- oder Foto-Berechtigungen</li><li>Lernstand nur im Speicher dieser App/Webseite</li></ul><p class="notice">Eine Web-App kann nicht auf Daten anderer iPhone-Apps wie Nachrichten, Kontakte oder Fotos zugreifen, ohne entsprechende iOS-Berechtigungen – diese App fordert keine an.</p></div><div class="card"><h3>Datenkontrolle</h3><div class="row"><button onclick="exportData()" class="secondary">Export</button><button onclick="wipe()" class="ghost">Alles löschen</button></div><p class="notice">Export wird nur auf dein Gerät heruntergeladen; es gibt keinen automatischen Upload.</p></div>`}
+function exportData(){let b=new Blob([JSON.stringify(s,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="kroatisch-tutor-daten.json";a.click()}
+function wipe(){if(confirm("Alle lokalen Lerndaten löschen?")){localStorage.removeItem(KEY);location.reload()}}
+if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});show("home");
+</script></body></html>
